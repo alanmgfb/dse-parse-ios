@@ -22,8 +22,13 @@ NSString *const USERNAME = @"alaniOS";
 NSString *const PASSWORD = @"alaniOS";
 NSArray *FB_READ_PERMS_ARRAY = nil;
 NSArray *FB_PUBLISH_PERMS_ARRAY = nil;
-bool pinned_first = NO;
 
+// OG Testing
+NSString *og_image_uri = nil;
+NSString *og_object_id = nil;
+
+// Parse Local Datastore
+bool pinned_first = NO;
 
 + (instancetype)sharedSource {
     static AMGParseSampleSource *sharedSource;
@@ -70,7 +75,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"OpenGraph Post"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Stage Image", @"Create OG Object", @"OG Post"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User"],
@@ -296,54 +301,72 @@ bool pinned_first = NO;
             break;
         }
             
-        case FB_OG_POST: {
-            NSLog(@"OpenGraph POST!");
+        case FB_STAGE_IMAGE: {
+            NSLog(@"FB Staging image!");
             UIImage *snoopy = [UIImage imageNamed:@"snoopy.png"];
             [FBRequestConnection
              startForUploadStagingResourceWithImage:snoopy
              completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                if(!error) {
-                    // Log the uri of the staged image
-                    [self alertWithMessage:[result objectForKey:@"uri"] title:@"Image Staging Success!"];
-                    NSLog(@"Picture URI: %@", [result objectForKey:@"uri"]);
-                    NSMutableDictionary<FBOpenGraphObject> *object = [FBGraphObject openGraphObjectForPost];
-                    object.provisionedForPost = YES;
-                    object[@"title"] = @"Death by Hug";
-                    object[@"type"] = @"alanmgsandbox:accident";
-                    object[@"description"] = [NSString stringWithFormat:@"Snoopy choked Woodstock with Love. %@", [NSDate date]];
-                    object[@"image"] = @[@{@"url": [result objectForKey:@"uri"], @"user_generated" : @"true" }];
-                    
-                    // Post custom object
-                    [FBRequestConnection
-                     startForPostOpenGraphObject:object
-                     completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                        if(!error) {
-                            NSString *objectId = [result objectForKey:@"id"];
-                            NSLog(@"object id: %@", objectId);
-                            id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
-                            [action setObject:objectId forKey:@"dish"];
-                            [FBRequestConnection
-                             startForPostWithGraphPath:@"/me/alanmgsandbox:photograph"
-                             graphObject:action
-                             completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                if(!error) {
-                                    NSLog(@"OG story posted, story id: %@", [result objectForKey:@"id"]);
-                                    [self alertWithMessage:@"Check your Facebook profile or activity log to see the story." title:@"OG story posted"];
-                                } else {
-                                    // An error occurred
-                                    [self alertWithMessage:[error description] title:@"Error Posting to Open Graph"];
-                                }
-                            }];
-                        } else {
-                            // An error occurred
-                            NSLog(@"Error posting the Open Graph object to the Object API: %@", error);
-                        }
-                    }];
-                } else {
-                    // An error occurred
-                    [self alertWithMessage:[error description] title:@"Image Staging Failed"];
-                }
-            }];
+                 if(!error) {
+                     og_image_uri = [result objectForKey:@"uri"];
+                     // Log the uri of the staged image
+                     [self alertWithMessage:og_image_uri title:@"Image Staging Success!"];
+                     NSLog(@"Picture URI: %@", og_image_uri);
+                 } else {
+                     // An error occurred
+                     [self alertWithMessage:[error description] title:@"Image Staging Failed"];
+                 }
+             }];
+            break;
+        }
+            
+        case FB_PUBLISH_OG_OBJECT: {
+            if (!og_image_uri) {
+                [self alertWithMessage:@"Please Stage Image First" title:@"Can't Publish Yet"];
+            } else {
+                NSMutableDictionary<FBOpenGraphObject> *object = [FBGraphObject openGraphObjectForPost];
+                object.provisionedForPost = YES;
+                object[@"title"] = @"Death by Hug";
+                object[@"type"] = @"alanmgsandbox:accident";
+                object[@"description"] = [NSString stringWithFormat:@"Snoopy choked Woodstock with Love. %@", [NSDate date]];
+                object[@"image"] = @[@{@"url":og_image_uri, @"user_generated" : @"true" }];
+                
+                // Post custom object
+                [FBRequestConnection
+                 startForPostOpenGraphObject:object
+                 completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                     if(!error) {
+                         og_object_id = [result objectForKey:@"id"];
+                         NSLog(@"object id: %@", og_object_id);
+                         [self alertWithMessage:og_object_id title:@"OG Object Creation Success!"];
+                     } else {
+                         // An error occurred
+                         NSLog(@"Error posting the Open Graph object to the Object API: %@", [error description]);
+                     }
+                 }];
+            }
+            break;
+        }
+            
+        case FB_OG_POST: {
+            if (!og_object_id) {
+                [self alertWithMessage:@"Please Publish Object First" title:@"Can't Post Yet!"];
+            } else {
+                id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
+                [action setObject:og_object_id forKey:@"accident"];
+                [FBRequestConnection
+                 startForPostWithGraphPath:@"/me/alanmgsandbox:photograph"
+                 graphObject:action
+                 completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                     if(!error) {
+                         NSLog(@"OG story posted, story id: %@", [result objectForKey:@"id"]);
+                         [self alertWithMessage:@"Check your Facebook profile or activity log to see the story." title:@"OG story posted"];
+                     } else {
+                         // An error occurred
+                         [self alertWithMessage:[error description] title:@"Error Posting to Open Graph"];
+                     }
+                 }];
+            }
             break;
         }
             
