@@ -40,6 +40,18 @@ bool pinned_first = NO;
     return sharedSource;
 }
 
+- (NSNumber *)currentStep {
+    if (![self isTutorialDone]) {
+        return [[self repro_steps] objectAtIndex:0];
+    }
+    
+    return nil;
+}
+
+- (bool)isTutorialDone {
+    return [[self repro_steps] count] == 0;
+}
+
 - (instancetype)init {
     [NSException raise:@"Singleton" format:@"Use [AMGParseSampleSource sharedSource]"];
     
@@ -49,8 +61,17 @@ bool pinned_first = NO;
 - (instancetype)initPrivate {
     self = [super init];
     [self setupSections];
+    
     FB_READ_PERMS_ARRAY = @[@"user_friends", @"email"];
     FB_PUBLISH_PERMS_ARRAY = @[@"publish_actions"];
+    
+    NSArray *steps = @[
+                       [NSNumber numberWithUnsignedInteger: LOGIN],
+                       [NSNumber numberWithUnsignedInteger: FB_LOGIN],
+                       [NSNumber numberWithUnsignedInteger: REFRESH_USER]
+                       ];
+    NSMutableArray *mSteps = [[NSMutableArray alloc] initWithArray:steps];
+    [self setRepro_steps:mSteps];
     
     return self;
 }
@@ -877,6 +898,14 @@ bool pinned_first = NO;
         default:
             NSLog(@"Unknown sample code to exeute!");
             break;
+    }
+}
+
+- (void)sampleFinished:(NSInteger)sampleIndex {
+    if ([self repro_steps].count > 0
+        && sampleIndex == [[[self repro_steps] objectAtIndex:0] integerValue]
+    ) {
+        [[self repro_steps] removeObjectAtIndex:0];
     }
 }
 

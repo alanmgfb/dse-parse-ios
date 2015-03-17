@@ -25,6 +25,7 @@
     return self;
 }
 
+// TODO: Execute logic here, for now calling AMGParseSampleSource
 - (void)execute:(NSInteger)sampleIndex {
     [[AMGParseSampleSource sharedSource] executeSample:sampleIndex];
 }

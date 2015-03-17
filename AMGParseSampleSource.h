@@ -10,6 +10,7 @@
 
 @interface AMGParseSampleSource : NSObject
 
+@property NSMutableArray *repro_steps;
 extern NSString *const EMAIL;
 extern NSString *const USERNAME;
 extern NSString *const PASSWORD;
@@ -62,6 +63,9 @@ typedef enum {
 } ParseSampleEnum;
 
 + (instancetype)sharedSource;
+- (NSNumber *)currentStep;
+- (bool)isTutorialDone;
 - (NSArray *)sections;
 - (void)executeSample:(NSInteger)sampleIndex;
+- (void)sampleFinished:(NSInteger)sampleIndex;
 @end

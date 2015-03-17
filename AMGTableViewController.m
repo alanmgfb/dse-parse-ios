@@ -58,15 +58,26 @@
     
     AMGParseSection *sectionWrapper = self.sections[indexPath.section];
     AMGParseSample *sampleWrapper = [sectionWrapper.samples objectAtIndex:indexPath.row];
-    
+
+    // Default style
     cell.textLabel.text = sampleWrapper.sampleName;
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.contentView.backgroundColor = [UIColor clearColor];
+    cell.textLabel.textColor = [UIColor blackColor];
+
+    NSUInteger accumulatedLength = [self calculateLength:indexPath.section - 1 withIndexPath:indexPath];
+    // Step by step highlight
+    if (![[AMGParseSampleSource sharedSource] isTutorialDone]) {
+        NSNumber *currentStep = [[AMGParseSampleSource sharedSource] currentStep];
+        if (accumulatedLength == [currentStep intValue]) {
+            cell.contentView.backgroundColor = [UIColor greenColor];
+        }
+    }
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    AMGParseSection *sectionWrapper = self.sections[indexPath.section];
-    AMGParseSample *sampleWrapper = [sectionWrapper.samples objectAtIndex:indexPath.row];
-    
     // Executing sample
     NSUInteger accumulatedLength = [self calculateLength:indexPath.section - 1 withIndexPath:indexPath];
     
@@ -88,9 +99,26 @@
             break;
             
         default:
-            [sampleWrapper execute:accumulatedLength];
+            [[AMGParseSampleSource sharedSource] executeSample:accumulatedLength];
             break;
     }
+
+    // Check if step selected is in the tutorial
+    // Update Cell UI
+    bool shouldFadeTutorialCell = accumulatedLength == [[[AMGParseSampleSource sharedSource] currentStep] unsignedIntegerValue];
+    [[AMGParseSampleSource sharedSource] sampleFinished:accumulatedLength];
+    [tableView beginUpdates];
+
+    if (shouldFadeTutorialCell) {
+        [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
+    if(![[AMGParseSampleSource sharedSource] isTutorialDone]) {
+        NSNumber *nextStep = [[AMGParseSampleSource sharedSource] currentStep];
+        NSIndexPath *nextStepPath = [self indexPathForCalculatedLength:[nextStep unsignedIntegerValue]];
+        [tableView reloadRowsAtIndexPaths:@[nextStepPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    [tableView endUpdates];
 }
 
 // Sent to the delegate to determine whether the log in request should be submitted to the server.
@@ -141,6 +169,23 @@
     
     AMGParseSection *tempSection = self.sections[currentIndex];
     return [self calculateLength:currentIndex - 1 withIndexPath:indexPath] + [tempSection.samples count];
+}
+
+// Transforming a calculated Index into an IndexPath with a given row
+- (NSIndexPath *)indexPathForCalculatedLength:(NSUInteger)length calculatedSection:(int)section {
+    AMGParseSection *tempSection = self.sections[section];
+    NSUInteger sectionLength = [tempSection.samples count];
+    
+    if (length < sectionLength) {
+        return [NSIndexPath indexPathForRow:length inSection:section];
+    }
+    
+    return [self indexPathForCalculatedLength:(length - sectionLength) calculatedSection:(section + 1)];
+}
+
+// Transforming a calculated index into an NSIndexPath
+- (NSIndexPath *)indexPathForCalculatedLength:(NSUInteger)calculatedLength {
+    return [self indexPathForCalculatedLength:calculatedLength calculatedSection:0];
 }
 
 @end
