@@ -10,11 +10,14 @@
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "AMGTableViewController.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 @implementation AMGAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //[FBSettings setFacebookDomainPart:@"{FACEBOOK-DOMAIN}"];
+    
     [Parse enableLocalDatastore];
     [Parse setApplicationId:@"YOUR_APP_ID"
                   clientKey:@"YOUR_CLIENT_KEY"];
