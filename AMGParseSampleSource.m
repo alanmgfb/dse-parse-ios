@@ -66,9 +66,9 @@ bool pinned_first = NO;
     FB_PUBLISH_PERMS_ARRAY = @[@"publish_actions"];
     
     NSArray *steps = @[
-                       [NSNumber numberWithUnsignedInteger: LOGIN],
                        [NSNumber numberWithUnsignedInteger: FB_LOGIN],
-                       [NSNumber numberWithUnsignedInteger: REFRESH_USER]
+                       [NSNumber numberWithUnsignedInteger: FB_REQUEST_EXTRA_PERMISSIONS],
+                       [NSNumber numberWithUnsignedInteger: FB_OG_IMAGE_FULL]
                        ];
     NSMutableArray *mSteps = [[NSMutableArray alloc] initWithArray:steps];
     [self setRepro_steps:mSteps];
@@ -394,11 +394,13 @@ bool pinned_first = NO;
         case FB_OG_IMAGE_FULL: {
             NSLog(@"Full OG Image Staging OG Posting FB Publishing!");
             UIImage *snoopy = [UIImage imageNamed:@"snoopy.png"];
+            NSLog(@"Access Token to Use: %@",[FBSession activeSession].accessTokenData.accessToken);
+            
             [FBRequestConnection
              startForUploadStagingResourceWithImage:snoopy
              completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
                  if(!error) {
-                     NSLog(result);
+
                      // Log the uri of the staged image
                      [self alertWithMessage:[result objectForKey:@"uri"] title:@"Image Staging Success!"];
                      NSLog(@"Picture URI: %@", [result objectForKey:@"uri"]);
@@ -416,7 +418,7 @@ bool pinned_first = NO;
                               NSString *objectId = [result objectForKey:@"id"];
                               NSLog(@"object id: %@", objectId);
                               id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
-                              [action setObject:objectId forKey:@"dish"];
+                              [action setObject:objectId forKey:@"accident"];
                               [FBRequestConnection
                                startForPostWithGraphPath:@"/me/alanmgsandbox:photograph"
                                graphObject:action
