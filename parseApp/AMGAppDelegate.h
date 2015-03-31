@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <FBSDKMessengerShareKit/FBSDKMessengerShareKit.h>
 
-@interface AMGAppDelegate : UIResponder <UIApplicationDelegate>
+@interface AMGAppDelegate : UIResponder <UIApplicationDelegate, FBSDKMessengerURLHandlerDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

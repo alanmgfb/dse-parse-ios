@@ -14,6 +14,7 @@
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKMessengerShareKit/FBSDKMessengerShareKit.h>
 
 @implementation AMGParseSampleSource
 static NSMutableArray *mutableSections = nil;
@@ -96,7 +97,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Stage Image", @"Create OG Object", @"OG Post", @"Full OG Sample"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Stage Image", @"Create OG Object", @"OG Post", @"Full OG Sample", @"Messenger Send Pic"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User"],
@@ -441,6 +442,16 @@ bool pinned_first = NO;
                      [self alertWithMessage:[error description] title:@"Image Staging Failed"];
                  }
              }];
+            break;
+        }
+            
+        case FB_MESSENGER_SEND_PIC: {
+            NSLog(@"Sending Pic Through Messenger!");
+            if ([FBSDKMessengerSharer messengerPlatformCapabilities] & FBSDKMessengerPlatformCapabilityImage) {
+                UIImage *image = [UIImage imageNamed:@"snoopy"];
+                
+                [FBSDKMessengerSharer shareImage:image withOptions:nil];
+            }
             break;
         }
             
