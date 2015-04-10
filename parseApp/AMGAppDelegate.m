@@ -11,6 +11,7 @@
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "AMGTableViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import <Bolts/Bolts.h>
 
 @implementation AMGAppDelegate
 FBSDKMessengerURLHandler *_messengerUrlHandler = nil;
@@ -49,6 +50,17 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
+    
+    // App Links Debugging
+    NSLog(@"Inbound URL %@", url);
+    BFURL *parsedUrl = [BFURL URLWithInboundURL:url sourceApplication:sourceApplication];
+    //NSLog([[parsedUrl targetURL] host]);
+    NSDictionary *queryParams = [parsedUrl inputQueryParameters];
+    // App Link data available, handle it here
+    if ([parsedUrl appLinkData]) {
+        NSLog(@"Parsed URL: %@", [parsedUrl targetURL]);
+    }
+    
     // Check if the handler knows what to do with this url
     if ([_messengerUrlHandler canOpenURL:url sourceApplication:sourceApplication]) {
         // Handle the url
