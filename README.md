@@ -71,3 +71,8 @@ switch(sampleIndex):
 ```
 
  Run. You should see your new section created on the UI, and when tapping on it, you will get a Log saying `Hello World!`
+ 
+ Hi, these are the random tests I'm doing:
+ <script>function testMe(){alert('alert me!');}</script>
+<p>Paragraph</p>
+<h1>Le Heich One</h1>
