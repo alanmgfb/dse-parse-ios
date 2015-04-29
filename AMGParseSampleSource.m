@@ -96,7 +96,7 @@ bool pinned_first = NO;
     
     NSDictionary *samples =
     @{
-      @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Log out"],
+      @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
       @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Stage Image", @"Create OG Object", @"OG Post", @"Full OG Sample", @"Messenger Send Pic"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
@@ -271,6 +271,17 @@ bool pinned_first = NO;
                 NSLog(@"About to reset your password!");
                 [PFUser requestPasswordResetForEmailInBackground:EMAIL block:^(BOOL succeeded, NSError *error) {
                     [self alertWithMessage:@"Password email sent, log out after changing to test" title:@"Password Email"];
+                }];
+            }
+            break;
+        }
+            
+        case FB_UNLINK: {
+            if ([PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+                [PFFacebookUtils unlinkUserInBackground:[PFUser currentUser] block:^(BOOL succeeded, NSError *error){
+                    NSLog(@"Came back from unlinking!");
+                    NSLog(@"succeeded? %i", succeeded);
+                    NSLog(@"Error es %@", error);
                 }];
             }
             break;
