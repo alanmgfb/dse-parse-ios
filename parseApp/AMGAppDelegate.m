@@ -8,9 +8,9 @@
 
 #import "AMGAppDelegate.h"
 #import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
+#import <ParseFacebookUtilsV4/PFFacebookUtils.h>
 #import "AMGTableViewController.h"
-#import <FacebookSDK/FacebookSDK.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <Bolts/Bolts.h>
 
 @implementation AMGAppDelegate
@@ -25,7 +25,7 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
     [Parse enableLocalDatastore];
     [Parse setApplicationId:@"YOUR_APP_ID"
                   clientKey:@"YOUR_CLIENT_KEY"];
-    [PFFacebookUtils initializeFacebook];
+    [PFFacebookUtils initializeFacebookWithApplicationLaunchOptions:launchOptions];
     /*
     [PFTwitterUtils initializeWithConsumerKey:@"consumer_key"
                                consumerSecret:@"consumer_secret"];
@@ -47,7 +47,7 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    return YES;
+    return [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (BOOL)application:(UIApplication *)application
@@ -71,17 +71,14 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
         [_messengerUrlHandler openURL:url sourceApplication:sourceApplication];
     }
     
-    return [FBAppCall handleOpenURL:url
-                  sourceApplication:sourceApplication
-                        withSession:[PFFacebookUtils session]];
+    return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
+    [FBSDKAppEvents activateApp];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
-    [[PFFacebookUtils session] close];
 }
 
 /**

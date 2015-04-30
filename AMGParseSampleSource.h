@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 
-@interface AMGParseSampleSource : NSObject
+@interface AMGParseSampleSource : NSObject <FBSDKSharingDelegate>
 
 @property NSMutableArray *repro_steps;
 extern NSString *const EMAIL;
@@ -28,9 +29,6 @@ typedef enum {
     FB_CURRENT_PERMISSIONS,
     FB_REQUEST_EXTRA_PERMISSIONS,
     FB_PUBLISH_RANDOM_POST,
-    FB_STAGE_IMAGE,
-    FB_PUBLISH_OG_OBJECT,
-    FB_OG_POST,
     FB_OG_IMAGE_FULL,
     FB_MESSENGER_SEND_PIC,
     SAVE_INSTALLATION,

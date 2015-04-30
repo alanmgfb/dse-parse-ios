@@ -12,8 +12,10 @@
 #import "AMGParseSample.h"
 #import <ParseUI/ParseUI.h>
 #import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
-#import <FacebookSDK/FacebookSDK.h>
+#import <ParseFacebookUtilsV4/PFFacebookUtils.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 #import <FBSDKMessengerShareKit/FBSDKMessengerShareKit.h>
 
 @implementation AMGParseSampleSource
@@ -97,7 +99,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Stage Image", @"Create OG Object", @"OG Post", @"Full OG Sample", @"Messenger Send Pic"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Messenger Send Pic"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User"],
@@ -195,7 +197,7 @@ bool pinned_first = NO;
             NSLog(@"Starting Facebook Auth");
             
             // Login PFUser using Facebook
-            [PFFacebookUtils logInWithPermissions:FB_READ_PERMS_ARRAY block:^(PFUser *user, NSError *error) {
+            [PFFacebookUtils logInInBackgroundWithReadPermissions:FB_READ_PERMS_ARRAY block:^(PFUser *user, NSError *error) {
                 NSLog(@"Came back from loginWithPermissions! Name is %@", user[@"displayName"]);
                 
                 if (!user) {
@@ -214,16 +216,20 @@ bool pinned_first = NO;
                         NSLog(@"User with facebook logged in!");
                     }
                     
+                    NSLog(@"Access Token es: %@", [[FBSDKAccessToken currentAccessToken] tokenString]);
+                    NSLog(@"Facebook User Name es :%@", [[FBSDKProfile currentProfile] name]);
                     NSMutableDictionary* params = [[NSMutableDictionary alloc] init];
-                    
                     [params setObject:@"id,gender,first_name,last_name,birthday" forKey:@"fields"];
-                    
-                    [FBRequestConnection startWithGraphPath:@"me/friends" parameters:params HTTPMethod:@"GET" completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                    [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/friends" parameters:params] startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                        if (!error) {
                         ////// do stuff with the friends. here we get only friends that use the app if permissions are asked via Safari > facebook.com
                         NSArray* friends = [result objectForKey:@"data"];
                         NSLog(@"Found: %lu friends", friends.count);
-                        for (NSDictionary<FBGraphUser>* friend in friends) {
-                            NSLog(@"I have a friend named %@ with id %@", friend.name, friend.objectID);
+                        for (NSDictionary *friend in friends) {
+                            NSLog(@"%@: %@", friend[@"id"], friend[@"name"]);
+                        }
+                        } else {
+                            NSLog(@"Graph API Error: %@", [error description]);
                         }
                     }];
                 }
@@ -300,14 +306,15 @@ bool pinned_first = NO;
         }
             
         case FB_CURRENT_PERMISSIONS: {
-            [self alertWithMessage:[NSString stringWithFormat:@"%@", [[PFFacebookUtils session] permissions]] title:@"Current Permissions"];
+            [self alertWithMessage:[NSString stringWithFormat:@"%@", [[FBSDKAccessToken currentAccessToken] permissions]] title:@"Current Permissions"];
             break;
         }
             
         case FB_REQUEST_EXTRA_PERMISSIONS: {
-            if ([[PFFacebookUtils session] isOpen]) {
-                NSLog(@"Session Permissions %@", [[PFFacebookUtils session] permissions]);
-                [PFFacebookUtils reauthorizeUser:[PFUser currentUser] withPublishPermissions:FB_PUBLISH_PERMS_ARRAY audience:FBSessionDefaultAudienceOnlyMe block:^(BOOL succeeded, NSError *error){
+            if ([FBSDKAccessToken currentAccessToken] != nil) {
+                NSLog(@"Session Permissions %@", [[FBSDKAccessToken currentAccessToken] permissions]);
+                FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+                [loginManager logInWithPublishPermissions:FB_PUBLISH_PERMS_ARRAY handler:^(FBSDKLoginManagerLoginResult *result, NSError *error){
                     if (!error) {
                         [self alertWithMessage:@"Requested extra permission successfully!" title:@"Request extra permissions"];
                     }
@@ -322,139 +329,46 @@ bool pinned_first = NO;
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSString stringWithFormat:@"Random Post %@", [NSDate date]], @"message", nil];
             
-            [FBRequestConnection startWithGraphPath:@"/me/feed"
-                                         parameters:params
-                                         HTTPMethod:@"POST"
-                                  completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                      if (error) {
-                                          NSLog(@"newpost: publish error is: %@", error);
-                                      }
-                                      else {
-                                          [self alertWithMessage:@"Publish success!" title:@"Publish Random Post"];
-                                      }
+            [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/feed" parameters:params HTTPMethod:@"POST"] startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                if (error) {
+                    NSLog(@"newpost: publish error is: %@", error);
+                }
+                else {
+                    [self alertWithMessage:@"Publish success!" title:@"Publish Random Post"];
+                }
             }];
-            break;
-        }
-            
-        case FB_STAGE_IMAGE: {
-            NSLog(@"FB Staging image!");
-            UIImage *snoopy = [UIImage imageNamed:@"snoopy.png"];
-            [FBRequestConnection
-             startForUploadStagingResourceWithImage:snoopy
-             completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                 if(!error) {
-                     og_image_uri = [result objectForKey:@"uri"];
-                     // Log the uri of the staged image
-                     [self alertWithMessage:og_image_uri title:@"Image Staging Success!"];
-                     NSLog(@"Picture URI: %@", og_image_uri);
-                 } else {
-                     // An error occurred
-                     [self alertWithMessage:[error description] title:@"Image Staging Failed"];
-                 }
-             }];
-            break;
-        }
-            
-        case FB_PUBLISH_OG_OBJECT: {
-            if (!og_image_uri) {
-                [self alertWithMessage:@"Please Stage Image First" title:@"Can't Publish Yet"];
-            } else {
-                NSMutableDictionary<FBOpenGraphObject> *object = [FBGraphObject openGraphObjectForPost];
-                object.provisionedForPost = YES;
-                object[@"title"] = @"Death by Hug";
-                object[@"type"] = @"alanmgsandbox:accident";
-                object[@"description"] = [NSString stringWithFormat:@"Snoopy choked Woodstock with Love. %@", [NSDate date]];
-                object[@"image"] = @[@{@"url":og_image_uri, @"user_generated" : @"true" }];
-                
-                // Post custom object
-                [FBRequestConnection
-                 startForPostOpenGraphObject:object
-                 completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                     if(!error) {
-                         og_object_id = [result objectForKey:@"id"];
-                         NSLog(@"object id: %@", og_object_id);
-                         [self alertWithMessage:og_object_id title:@"OG Object Creation Success!"];
-                     } else {
-                         // An error occurred
-                         NSLog(@"Error posting the Open Graph object to the Object API: %@", [error description]);
-                     }
-                 }];
-            }
-            break;
-        }
-            
-        case FB_OG_POST: {
-            if (!og_object_id) {
-                [self alertWithMessage:@"Please Publish Object First" title:@"Can't Post Yet!"];
-            } else {
-                id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
-                [action setObject:og_object_id forKey:@"accident"];
-                [FBRequestConnection
-                 startForPostWithGraphPath:@"/me/alanmgsandbox:photograph"
-                 graphObject:action
-                 completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                     if(!error) {
-                         NSLog(@"OG story posted, story id: %@", [result objectForKey:@"id"]);
-                         [self alertWithMessage:@"Check your Facebook profile or activity log to see the story." title:@"OG story posted"];
-                     } else {
-                         // An error occurred
-                         [self alertWithMessage:[error description] title:@"Error Posting to Open Graph"];
-                     }
-                 }];
-            }
             break;
         }
             
         case FB_OG_IMAGE_FULL: {
             NSLog(@"Full OG Image Staging OG Posting FB Publishing!");
-            UIImage *snoopy = [UIImage imageNamed:@"snoopy.png"];
-            NSLog(@"Access Token to Use: %@",[FBSession activeSession].accessTokenData.accessToken);
+            NSLog(@"Access Token to Use: %@",[FBSDKAccessToken currentAccessToken]);
             
-            [FBRequestConnection
-             startForUploadStagingResourceWithImage:snoopy
-             completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                 if(!error) {
-
-                     // Log the uri of the staged image
-                     [self alertWithMessage:[result objectForKey:@"uri"] title:@"Image Staging Success!"];
-                     NSLog(@"Picture URI: %@", [result objectForKey:@"uri"]);
-                     NSMutableDictionary<FBOpenGraphObject> *object = [FBGraphObject openGraphObjectForPost];
-                     object.provisionedForPost = YES;
-                     object[@"title"] = @"Death by Hug";
-                     object[@"type"] = @"alanmgsandbox:accident";
-                     object[@"description"] = [NSString stringWithFormat:@"Snoopy choked Woodstock with Love. %@", [NSDate date]];
-                     object[@"image"] = @[@{@"url": [result objectForKey:@"uri"], @"user_generated" : @"true" }];
-                     // Post custom object
-                     [FBRequestConnection
-                      startForPostOpenGraphObject:object
-                      completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                          if(!error) {
-                              NSString *objectId = [result objectForKey:@"id"];
-                              NSLog(@"object id: %@", objectId);
-                              id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
-                              [action setObject:objectId forKey:@"accident"];
-                              [FBRequestConnection
-                               startForPostWithGraphPath:@"/me/alanmgsandbox:photograph"
-                               graphObject:action
-                               completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-                                   if(!error) {
-                                       NSLog(@"OG story posted, story id: %@", [result objectForKey:@"id"]);
-                                       [self alertWithMessage:@"Check your Facebook profile or activity log to see the story." title:@"OG story posted"];
-                                   } else {
-                                       // An error occurred
-                                       [self alertWithMessage:[error description] title:@"Error Posting to Open Graph"];
-                                   }
-                               }];
-                          } else {
-                              // An error occurred
-                              NSLog(@"Error posting the Open Graph object to the Object API: %@", error);
-                          }
-                      }];
-                 } else {
-                     // An error occurred
-                     [self alertWithMessage:[error description] title:@"Image Staging Failed"];
-                 }
-             }];
+            // Photo to be shared
+            FBSDKSharePhoto *shareSnoopy = [[FBSDKSharePhoto alloc] init];
+            shareSnoopy.image = [UIImage imageNamed:@"snoopy.png"];
+            shareSnoopy.userGenerated = YES;
+            
+            // OG object
+            NSDictionary *ogProperties = @{
+                                           @"og:type":@"alanmgsandbox:accident",
+                                           @"og:title":@"Death by Hug",
+                                           @"og:description":[NSString stringWithFormat:@"Snoopy choked Woodstock with Love! %@", [NSDate date]]
+            };
+            FBSDKShareOpenGraphObject *ogObject = [FBSDKShareOpenGraphObject objectWithProperties:ogProperties];
+            
+            // Action
+            FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
+            action.actionType = @"alanmgsandbox.photograph";
+            [action setObject:ogObject forKey:@"accident"];
+            [action setPhoto:shareSnoopy forKey:@"image"];
+            
+            // Content
+            FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
+            content.action = action;
+            content.previewPropertyName = @"accident";
+            [FBSDKShareAPI shareWithContent:content delegate:self];
+            
             break;
         }
             
@@ -1010,6 +924,28 @@ bool pinned_first = NO;
     }
 }
 
+/*
+*
+*   FBSDKSharingDelagte
+*
+*/
+- (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results {
+    [self alertWithMessage:[NSString stringWithFormat:@"Results:\n%@", results] title:@"Sharing Completed!"];
+}
+
+-(void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
+    [self alertWithMessage:[NSString stringWithFormat:@"Error:]n%@", [error description]] title:@"Sharing Failed!"];
+}
+
+-(void)sharerDidCancel:(id<FBSDKSharing>)sharer {
+    [self alertWithMessage:@"Sharer Cancelled" title:@"Sharing Failed!"];
+}
+
+/*
+ *
+ *   Random Logging
+ *
+ */
 - (void)logTwitterCredentials {
     [self alertWithMessage:[NSString stringWithFormat:@"AuthToken: %@\n@AuthTokenSecret: %@", [[PFTwitterUtils twitter] authToken], [[PFTwitterUtils twitter] authTokenSecret]] title:@"Twitter Credentials!"];
 }
