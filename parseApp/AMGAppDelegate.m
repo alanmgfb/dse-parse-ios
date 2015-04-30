@@ -26,6 +26,10 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
     [Parse setApplicationId:@"YOUR_APP_ID"
                   clientKey:@"YOUR_CLIENT_KEY"];
     [PFFacebookUtils initializeFacebook];
+    /*
+    [PFTwitterUtils initializeWithConsumerKey:@"consumer_key"
+                               consumerSecret:@"consumer_secret"];
+    */
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

@@ -237,6 +237,7 @@ bool pinned_first = NO;
                      if (!error) {
                          if (succeeded) {
                              [self alertWithMessage:@"Authorization Successful!" title:@"Twitter Login"];
+                             [self logTwitterCredentials];
                          }
                          else {
                              [self alertWithMessage:@"Authorization Cancelled!" title:@"Twitter Login"];
@@ -254,6 +255,7 @@ bool pinned_first = NO;
                      if (!error) {
                          if (user) {
                              [self alertWithMessage:@"Authorization Successful!" title:@"Twitter Login"];
+                             [self logTwitterCredentials];
                          } else {
                              [self alertWithMessage:@"Authorization Cancelled!" title:@"Twitter Login"];
                          }
@@ -1006,6 +1008,10 @@ bool pinned_first = NO;
     } else {
         [self alertWithMessage:@"You have to Sign Up first!" title:[NSString stringWithFormat:@"Role Test With Field '%@d'", field]];
     }
+}
+
+- (void)logTwitterCredentials {
+    [self alertWithMessage:[NSString stringWithFormat:@"AuthToken: %@\n@AuthTokenSecret: %@", [[PFTwitterUtils twitter] authToken], [[PFTwitterUtils twitter] authTokenSecret]] title:@"Twitter Credentials!"];
 }
 
 - (void)logUser:(PFUser*) fetched {
