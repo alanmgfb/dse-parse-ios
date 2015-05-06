@@ -20,8 +20,6 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    //[FBSettings setFacebookDomainPart:@"{FACEBOOK-DOMAIN}"];
-    
     [Parse enableLocalDatastore];
     [Parse setApplicationId:@"YOUR_APP_ID"
                   clientKey:@"YOUR_CLIENT_KEY"];
