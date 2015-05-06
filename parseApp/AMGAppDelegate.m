@@ -30,6 +30,15 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
     */
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    // Remote notifications. Won't work on this app but still :P
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes  categories:nil];
+    [application registerUserNotificationSettings:settings];
+    [application registerForRemoteNotifications];
+    
+    // Saving PFInstallation because why not.
+    [[PFInstallation currentInstallation] saveInBackground];
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
     // Override point for customization after application launch.
@@ -77,6 +86,20 @@ FBSDKMessengerURLHandlerReplyContext *_replyContext = nil;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    NSLog(@"We registered for remote notifications with device token!");
+    // Store the deviceToken in the current Installation and save it to Parse
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    [currentInstallation saveInBackgroundWithBlock:^(BOOL success, NSError *error) {
+        NSLog(@"Installation saved successfully!");
+    }];
+}
+
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    NSLog(@"Failed to register for remote notifications because %@", [error description]);
 }
 
 /**
