@@ -99,7 +99,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Messenger Send Pic"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Send Game Request", @"Messenger Send Pic"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User"],
@@ -368,6 +368,15 @@ bool pinned_first = NO;
             content.action = action;
             content.previewPropertyName = @"accident";
             [FBSDKShareAPI shareWithContent:content delegate:self];
+            
+            break;
+        }
+            
+        case FB_GAME_REQUEST: {
+            FBSDKGameRequestContent *grc = [[FBSDKGameRequestContent alloc] init];
+            grc.message = @"Game Request Message!";
+            grc.title = @"Game Request Title!";
+            [FBSDKGameRequestDialog showWithContent:grc delegate:self];
             
             break;
         }
@@ -939,6 +948,23 @@ bool pinned_first = NO;
 
 -(void)sharerDidCancel:(id<FBSDKSharing>)sharer {
     [self alertWithMessage:@"Sharer Cancelled" title:@"Sharing Failed!"];
+}
+
+/*
+ *
+ *  FBSDKGameRequestDialogDelegate
+ *
+*/
+- (void)gameRequestDialog:(FBSDKGameRequestDialog *)gameRequestDialog didCompleteWithResults:(NSDictionary *)results {
+    NSLog(@"Game Request Dialog Completed");
+}
+
+- (void)gameRequestDialog:(FBSDKGameRequestDialog *)gameRequestDialog didFailWithError:(NSError *)error {
+    NSLog(@"Game Request Dialog Failed");
+}
+
+- (void) gameRequestDialogDidCancel:(FBSDKGameRequestDialog *)gameRequestDialog {
+    NSLog(@"Game Request Dialog Cancelled");
 }
 
 /*
