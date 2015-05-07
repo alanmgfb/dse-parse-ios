@@ -356,12 +356,13 @@ bool pinned_first = NO;
                                            @"og:description":[NSString stringWithFormat:@"Snoopy choked Woodstock with Love! %@", [NSDate date]]
             };
             FBSDKShareOpenGraphObject *ogObject = [FBSDKShareOpenGraphObject objectWithProperties:ogProperties];
+            [ogObject setPhoto:shareSnoopy forKey:@"og:image"];
             
             // Action
             FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
-            action.actionType = @"alanmgsandbox.photograph";
+            action.actionType = @"alanmgsandbox:photograph";
             [action setObject:ogObject forKey:@"accident"];
-            [action setPhoto:shareSnoopy forKey:@"image"];
+            //[action setPhoto:shareSnoopy forKey:@"og:image"];
             
             // Content
             FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
