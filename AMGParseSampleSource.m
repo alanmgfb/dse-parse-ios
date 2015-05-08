@@ -342,7 +342,7 @@ bool pinned_first = NO;
             
         case FB_OG_IMAGE_FULL: {
             NSLog(@"Full OG Image Staging OG Posting FB Publishing!");
-            NSLog(@"Access Token to Use: %@",[FBSDKAccessToken currentAccessToken]);
+            NSLog(@"Access Token to Use: %@",[[FBSDKAccessToken currentAccessToken] tokenString]);
             
             // Photo to be shared
             FBSDKSharePhoto *shareSnoopy = [[FBSDKSharePhoto alloc] init];
@@ -368,8 +368,11 @@ bool pinned_first = NO;
             FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
             content.action = action;
             content.previewPropertyName = @"accident";
-            [FBSDKShareAPI shareWithContent:content delegate:self];
             
+            // You can use either or:
+            // [FBSDKShareAPI shareWithContent:content delegate:self];
+             [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
+                                         withContent:content delegate:self];
             break;
         }
             
