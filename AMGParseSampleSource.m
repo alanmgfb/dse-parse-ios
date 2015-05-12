@@ -26,10 +26,6 @@ NSString *const PASSWORD = @"alaniOS";
 NSArray *FB_READ_PERMS_ARRAY = nil;
 NSArray *FB_PUBLISH_PERMS_ARRAY = nil;
 
-// OG Testing
-NSString *og_image_uri = nil;
-NSString *og_object_id = nil;
-
 // Parse Local Datastore
 bool pinned_first = NO;
 
@@ -102,8 +98,8 @@ bool pinned_first = NO;
       @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Send Game Request", @"Messenger Send Pic"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
-      @"PFObjects" : @[@"Save PFUser Property", @"Refresh User"],
-      @"Queries" : @[@"Get First Object", @"Get First, using class", @"Compound Query Test"],
+      @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
+      @"Queries" : @[@"Get First Object", @"Get First, using class", @"Compound Query Test", @"Using Descriptor"],
       @"LDS" : @[@"Pinning", @"Pin With Name",@"Query Pin With Name", @"Query All Locally (Pin First)", @"Query Locally (Pin First)", @"Save Locally", @"Delete In Background", @"Pinning Null, then Querying", @"Save and Pin LocalPinObjects", @"Count LocalPinObjects, offline", @"Count LocalPinObjects, online", @"LDS Nested Pin", @"LDS Nested Fetch", @"User Relation Create", @"User Relation Online Fetch", @"User Relation Local Fetch"],
       @"Pointers": @[@"Get Pointer Object Test", @"Get Empty Pointer Object Test"],
       @"Random" : @[@"BC / AD Dates Saving", @"BC / AD Dates Retrieving"]
@@ -476,6 +472,40 @@ bool pinned_first = NO;
             break;
         }
             
+        case MUTEX_LOCK: {
+            NSLog(@"Mutex Lock. I recommend turning off wifi so your DB is not hammered");
+            PFObject *a = [PFObject objectWithClassName:@"MutexLock"];
+            a[@"user"] = [PFUser currentUser];
+            a[@"name"] = @"a";
+            [a saveEventually];
+            
+            PFObject *b = [PFObject objectWithClassName:@"MutexLock"];
+            b[@"name"] = @"b";
+            b[@"parent"] = a;
+            [b saveEventually];
+            
+            PFObject *c = [PFObject objectWithClassName:@"MutexLock"];
+            c[@"name"] = @"c";
+            c[@"parent"] = b;
+            [c saveEventually];
+            
+            PFObject *d = [PFObject objectWithClassName:@"MutexLock"];
+            d[@"name"] = @"d";
+            d[@"parent"] = b;
+            [d saveEventually];
+
+            PFObject *e = [PFObject objectWithClassName:@"MutexLock"];
+            e[@"name"] = @"e";
+            e[@"parent"] = b;
+            [e saveEventually];
+            
+            // Trying to cause the world to burn
+            d[@"friend_name"] = b[@"name"];
+            
+            NSLog(@"Mutex test done.");
+            break;
+        }
+            
         case QUERY_FIRST_OBJECT: {
             PFQuery *aclq = [PFQuery queryWithClassName:@"ACLTest"];
             NSError *error;
@@ -497,6 +527,30 @@ bool pinned_first = NO;
             
         case QUERY_COMPOUND: {
             [self alertWithMessage:@"Not Implemented" title:@"Compound Query Test"];
+            break;
+        }
+            
+        case QUERY_DESCRIPTOR: {
+            NSLog(@"Querying using Sort Descriptor!");
+            
+            PFQuery *scoreQuery = [PFQuery queryWithClassName:@"Score"];
+            NSSortDescriptor *scoreDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"objectId" ascending:YES comparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+                return [obj1 compare:obj2];
+            }];
+            [scoreQuery orderBySortDescriptor:scoreDescriptor];
+            [scoreQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                NSLog(@"Query Callback!");
+                if (error) {
+                    [self alertWithMessage:[error description] title:@"Query Descriptor"];
+                } else {
+                    NSLog(@"Finding!");
+                    for (PFObject *object in objects) {
+                        NSLog(@"Found %@ = %@", object.objectId, object[@"score"]);
+                    }
+                }
+            }];
+            
+            NSLog(@"Sort Descriptor Done!");
             break;
         }
             
