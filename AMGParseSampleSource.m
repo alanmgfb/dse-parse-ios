@@ -95,7 +95,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Send Game Request", @"Messenger Send Pic"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -388,6 +388,14 @@ bool pinned_first = NO;
                 
                 [FBSDKMessengerSharer shareImage:image withOptions:nil];
             }
+            break;
+        }
+            
+        case FB_INVITE: {
+            FBSDKAppInviteContent *content = [[FBSDKAppInviteContent alloc] init];
+            content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1565514703709197"];
+            [FBSDKAppInviteDialog showWithContent:content delegate:self];
+            
             break;
         }
             
@@ -998,10 +1006,12 @@ bool pinned_first = NO;
 */
 - (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results {
     [self alertWithMessage:[NSString stringWithFormat:@"Results:\n%@", results] title:@"Sharing Completed!"];
+    NSLog(results);
 }
 
 -(void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
     [self alertWithMessage:[NSString stringWithFormat:@"Error:]n%@", [error description]] title:@"Sharing Failed!"];
+    NSLog([error description]);
 }
 
 -(void)sharerDidCancel:(id<FBSDKSharing>)sharer {
@@ -1023,6 +1033,19 @@ bool pinned_first = NO;
 
 - (void) gameRequestDialogDidCancel:(FBSDKGameRequestDialog *)gameRequestDialog {
     NSLog(@"Game Request Dialog Cancelled");
+}
+
+/*
+ *
+ *  FBSDKAppInviteDialogDelegate
+ *
+ */
+- (void)appInviteDialog:(FBSDKAppInviteDialog *)appInviteDialog didCompleteWithResults:(NSDictionary *)results {
+    NSLog(@"Invite dialog did complete!");
+}
+
+- (void)appInviteDialog:(FBSDKAppInviteDialog *)appInviteDialog didFailWithError:(NSError *)error {
+    NSLog(@"Invite dialog did fail with error %@", [error description]);
 }
 
 /*
