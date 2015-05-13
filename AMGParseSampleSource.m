@@ -1005,11 +1005,12 @@ bool pinned_first = NO;
 *
 */
 - (void)sharer:(id<FBSDKSharing>)sharer didCompleteWithResults:(NSDictionary *)results {
+    NSLog(@"Sharing didCompleteWithResults");
     [self alertWithMessage:[NSString stringWithFormat:@"Results:\n%@", results] title:@"Sharing Completed!"];
-    NSLog(results);
 }
 
 -(void)sharer:(id<FBSDKSharing>)sharer didFailWithError:(NSError *)error {
+    NSLog(@"Sharing didFailWithError");
     [self alertWithMessage:[NSString stringWithFormat:@"Error:]n%@", [error description]] title:@"Sharing Failed!"];
     NSLog([error description]);
 }
