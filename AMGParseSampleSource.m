@@ -95,7 +95,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -372,6 +372,27 @@ bool pinned_first = NO;
             break;
         }
             
+        case FB_UPLOAD_PHOTO: {
+            if (![FBSDKAccessToken currentAccessToken]) {
+                [self alertWithMessage:@"Log into FB and request publish_actions" title:@"Upload Failed"];
+                return;
+            }
+            
+            NSDictionary *params = @{
+                                     @"source":UIImagePNGRepresentation([UIImage imageNamed:@"snoopy.png"])
+                                     };
+            
+            [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me/photos" parameters:params HTTPMethod:@"POST"] startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                if (!error) {
+                    [self alertWithMessage:[NSString stringWithFormat:@"Result: %@", result] title:@"Post Photo Success!"];
+                } else {
+                    NSLog(@"Graph API Error: %@", [error description]);
+                }
+            }];
+            
+            break;
+        }
+            
         case FB_GAME_REQUEST: {
             FBSDKGameRequestContent *grc = [[FBSDKGameRequestContent alloc] init];
             grc.message = @"Game Request Message!";
@@ -543,8 +564,10 @@ bool pinned_first = NO;
             
             PFQuery *scoreQuery = [PFQuery queryWithClassName:@"Score"];
             NSSortDescriptor *scoreDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"objectId" ascending:YES comparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+                NSLog(@"Never executed");
                 return [obj1 compare:obj2];
             }];
+            
             [scoreQuery orderBySortDescriptor:scoreDescriptor];
             [scoreQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                 NSLog(@"Query Callback!");
