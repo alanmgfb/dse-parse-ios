@@ -348,17 +348,19 @@ bool pinned_first = NO;
             // OG object
             NSDictionary *ogProperties = @{
                                            @"og:type":@"alanmgsandbox:accident",
-                                           @"og:title":@"Death by Hug",
-                                           @"og:description":[NSString stringWithFormat:@"Snoopy choked Woodstock with Love! %@", [NSDate date]]
+                                           @"og:title":@"Watch out!",
+                                           @"og:description":[NSString stringWithFormat:@"On %@, Snoopy tripped into Woodstock!", [NSDate date]]
             };
             FBSDKShareOpenGraphObject *ogObject = [FBSDKShareOpenGraphObject objectWithProperties:ogProperties];
-            [ogObject setPhoto:shareSnoopy forKey:@"og:image"];
+            // If what you intend is to add the image to the OG Object, do it like this:
+            // [ogObject setPhoto:shareSnoopy forKey:@"og:image"];
             
             // Action
             FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
             action.actionType = @"alanmgsandbox:photograph";
             [action setObject:ogObject forKey:@"accident"];
-            //[action setPhoto:shareSnoopy forKey:@"og:image"];
+            // If you want to add an image to the Action, use this:
+            [action setArray:@[shareSnoopy] forKey:@"image"];
             
             // Content
             FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
@@ -367,7 +369,10 @@ bool pinned_first = NO;
             
             // You can use either or:
             // [FBSDKShareAPI shareWithContent:content delegate:self];
-             [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
+            
+            // Putting the image in the action right now using FBSDKShareDialog has the side effect of no image
+            // actually being shown here. Will update later
+            [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
                                          withContent:content delegate:self];
             break;
         }
