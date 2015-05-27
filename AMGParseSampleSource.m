@@ -99,7 +99,7 @@ bool pinned_first = NO;
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
-      @"Queries" : @[@"Get First Object", @"Get First, using class", @"Compound Query Test", @"Using Descriptor"],
+      @"Queries" : @[@"Get First Object", @"Get First, using class", @"Compound Query Test", @"Using Descriptor", @"CacheThenNetwork"],
       @"LDS" : @[@"Pinning", @"Pin With Name",@"Query Pin With Name", @"Query All Locally (Pin First)", @"Query Locally (Pin First)", @"Save Locally", @"Delete In Background", @"Pinning Null, then Querying", @"Save and Pin LocalPinObjects", @"Count LocalPinObjects, offline", @"Count LocalPinObjects, online", @"LDS Nested Pin", @"LDS Nested Fetch", @"User Relation Create", @"User Relation Online Fetch", @"User Relation Local Fetch"],
       @"Pointers": @[@"Get Pointer Object Test", @"Get Empty Pointer Object Test"],
       @"Random" : @[@"BC / AD Dates Saving", @"BC / AD Dates Retrieving"]
@@ -587,6 +587,36 @@ bool pinned_first = NO;
             }];
             
             NSLog(@"Sort Descriptor Done!");
+            break;
+        }
+            
+        case QUERY_CACHE: {
+            PFQuery *userQuery = [PFQuery queryWithClassName:@"_User"];
+            if ([userQuery hasCachedResult]) {
+                NSLog(@"Cached result!");
+            } else {
+                NSLog(@"No Cached result!");
+            }
+            userQuery.cachePolicy = kPFCachePolicyCacheThenNetwork;
+            
+            __block BOOL cachedResult = YES;
+            [userQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                if (!error) {
+                    [self alertWithMessage:[NSString stringWithFormat:@"Cached? %d", cachedResult] title:@"Query Cache Result!"];
+
+                    //we send whether or not the result is cached or not
+                    if (cachedResult) {
+                        cachedResult = NO;
+                    }
+                }
+                else{
+                    NSLog(@"Cache query error!");
+                    if (error.code == kPFErrorCacheMiss) {
+                        NSLog(@"Profile: kPFErrorCacheMiss");
+                        [self alertWithMessage:error.localizedDescription title:@"Query Cache Failed"];
+                    }
+                }
+            }];
             break;
         }
             
