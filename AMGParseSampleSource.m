@@ -592,11 +592,6 @@ bool pinned_first = NO;
             
         case QUERY_CACHE: {
             PFQuery *userQuery = [PFQuery queryWithClassName:@"_User"];
-            if ([userQuery hasCachedResult]) {
-                NSLog(@"Cached result!");
-            } else {
-                NSLog(@"No Cached result!");
-            }
             userQuery.cachePolicy = kPFCachePolicyCacheThenNetwork;
             
             __block BOOL cachedResult = YES;
