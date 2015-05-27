@@ -602,11 +602,15 @@ bool pinned_first = NO;
             __block BOOL cachedResult = YES;
             [userQuery getFirstObjectInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                 if (!error) {
-                    [self alertWithMessage:[NSString stringWithFormat:@"Cached? %d", cachedResult] title:@"Query Cache Result!"];
-
+                    NSLog(@"Cache query result. CachedResult? %d", cachedResult);
+                    NSLog(@"Retrieved object: %@", object.objectId);
+                    
                     //we send whether or not the result is cached or not
                     if (cachedResult) {
+                        NSLog(@"Retrieved from cache");
                         cachedResult = NO;
+                    } else {
+                        NSLog(@"Retrieved from network");
                     }
                 }
                 else{
