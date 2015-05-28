@@ -397,6 +397,8 @@ bool pinned_first = NO;
             // Action
             FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
             action.actionType = @"video.watches";
+            [action setNumber:[NSNumber numberWithInt:2800] forKey:@"video:expires_in"];
+            [action setNumber:[NSNumber numberWithBool:YES] forKey:@"video:fb:explicitly_shared"];
             [action setObject:ogObject forKey:@"movie"];
             
             // Content
