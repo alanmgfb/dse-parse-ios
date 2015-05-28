@@ -95,7 +95,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog"],
+      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -374,6 +374,37 @@ bool pinned_first = NO;
             // actually being shown here. Will update later
             [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
                                          withContent:content delegate:self];
+            break;
+        }
+            
+        case FB_OG_MOVIE: {
+            NSLog(@"Full OG Image Staging OG Posting FB Publishing!");
+            NSLog(@"Access Token to Use: %@",[[FBSDKAccessToken currentAccessToken] tokenString]);
+            
+            // Photo to be shared
+            FBSDKSharePhoto *shareSnoopy = [[FBSDKSharePhoto alloc] init];
+            shareSnoopy.image = [UIImage imageNamed:@"snoopy.png"];
+            
+            // OG object
+            NSDictionary *ogProperties = @{
+                                           @"og:type":@"video.movie",
+                                           @"og:title":@"Peanuts! Open Graph Adventure",
+                                           @"og:description":[NSString stringWithFormat:@"To be released %@, be ready!", [NSDate date]],
+                                           @"og:image": @[shareSnoopy]
+                                           };
+            FBSDKShareOpenGraphObject *ogObject = [FBSDKShareOpenGraphObject objectWithProperties:ogProperties];
+            
+            // Action
+            FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
+            action.actionType = @"video.watches";
+            [action setObject:ogObject forKey:@"movie"];
+            
+            // Content
+            FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
+            content.action = action;
+            content.previewPropertyName = @"movie";
+            
+            [FBSDKShareAPI shareWithContent:content delegate:self];
             break;
         }
             
