@@ -84,7 +84,7 @@
     switch (accumulatedLength) {
             
         //Login with Parse's VC
-        case VC_LOGIN:
+        case VC_LOGIN: {
             if (![PFUser currentUser]) {
                 PFLogInViewController *loginViewController = [[PFLogInViewController alloc] init];
                 [loginViewController setDelegate:self];
@@ -95,6 +95,21 @@
                 [loginViewController setSignUpController:signupViewController];
                 
                 [self presentViewController:loginViewController animated:YES completion:NULL];
+            }
+            }
+            break;
+            
+        case FB_SHARE_SHEET: {
+            NSURL *snoopy = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"snoopy" ofType:@"png"]];
+        
+            UIActivityViewController *activityViewController =
+            [[UIActivityViewController alloc] initWithActivityItems:@[snoopy]
+                                              applicationActivities:nil];
+            [self presentViewController:activityViewController
+                               animated:YES
+                             completion:^{
+                                 NSLog(@"Share Sheet Done!");
+                             }];
             }
             break;
             
