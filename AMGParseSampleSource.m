@@ -95,7 +95,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Sheet"],
+      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -298,6 +298,22 @@ bool pinned_first = NO;
             } else {
                 [self alertWithMessage:@"Please Log in first." title:@"Parse Log Out"];
             }
+            break;
+        }
+            
+        case FB_ONLY_LOGIN: {
+            FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
+            login.loginBehavior = FBSDKLoginBehaviorWeb;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [login logInWithReadPermissions:FB_READ_PERMS_ARRAY handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+                    NSLog(@"%@", result);
+                    
+                    if (error != nil) {
+                        NSLog(@"%@", [error description]);
+                    }
+                }];
+            });
             break;
         }
             
