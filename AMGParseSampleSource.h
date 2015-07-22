@@ -20,6 +20,7 @@ typedef enum {
     SIGN_UP,
     LOGIN,
     ANON_LOGIN,
+    IS_ANON_USER,
     VC_LOGIN,
     FB_LOGIN,
     TWITTER_LOGIN,

@@ -94,7 +94,7 @@ bool pinned_first = NO;
     
     NSDictionary *samples =
     @{
-      @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
+      @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"Is Anon User?", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
       @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
@@ -155,7 +155,10 @@ bool pinned_first = NO;
             
         case LOGIN: {
             NSLog(@"Login!");
-            if (![PFUser currentUser]) {
+            // No user present, or
+            // Anonymous user
+            if (![PFUser currentUser] ||
+                [PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]) {
                 NSString *userName = USERNAME;
                 NSString *password = PASSWORD;
                 
@@ -183,6 +186,15 @@ bool pinned_first = NO;
                 
                 }
             }];
+            break;
+        }
+            
+        case IS_ANON_USER: {
+            [self alertWithMessage:[NSString stringWithFormat:@"%d", [PFAnonymousUtils isLinkedWithUser:[PFUser currentUser]]]
+                             title:@"Is Anonymous User?"];
+            
+            NSLog(@"Printing RandomNumber: %@", [PFUser currentUser][@"RandomNumber"]);
+            [PFUser currentUser][@"RandomNumber"] = @10022;
             break;
         }
             
@@ -307,7 +319,7 @@ bool pinned_first = NO;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [login logInWithReadPermissions:FB_READ_PERMS_ARRAY handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
-                    NSLog(@"%@", result);
+                    NSLog(@"%@", [result token].tokenString);
                     
                     if (error != nil) {
                         NSLog(@"%@", [error description]);
@@ -526,7 +538,7 @@ bool pinned_first = NO;
         case ACL_TEST_QUERY: {
             PFQuery *aclTestQuery = [PFQuery queryWithClassName:@"ACLTest"];
             [aclTestQuery whereKey:@"createdAt" lessThan:[NSDate date]];
-            [aclTestQuery setCachePolicy:kPFCachePolicyCacheElseNetwork];
+            //[aclTestQuery setCachePolicy:kPFCachePolicyCacheElseNetwork];
             [aclTestQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                 NSLog(@"Callback!");
                 if (error) {
