@@ -34,6 +34,7 @@
 		2B4B7C0B19B69322006F7A5C /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7C0719B69139006F7A5C /* Accounts.framework */; };
 		2B4B7C0D19B69360006F7A5C /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7C0C19B69360006F7A5C /* Social.framework */; };
 		2B947CD61B600B6D003764F3 /* IMG_0838.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 2B947CD51B600B6D003764F3 /* IMG_0838.MOV */; };
+		2B947CD81B6011B8003764F3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B947CD71B6011B8003764F3 /* AssetsLibrary.framework */; };
 		2BA5998D1A609FA600702947 /* AMGTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA5998C1A609FA600702947 /* AMGTableViewController.m */; };
 		2BA599901A60AAD200702947 /* AMGParseSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA5998F1A60AAD200702947 /* AMGParseSection.m */; };
 		2BA599961A60B3CB00702947 /* AMGParseSample.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA599951A60B3CB00702947 /* AMGParseSample.m */; };
@@ -94,6 +95,7 @@
 		2B4B7C0919B6930C006F7A5C /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		2B4B7C0C19B69360006F7A5C /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		2B947CD51B600B6D003764F3 /* IMG_0838.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = IMG_0838.MOV; sourceTree = "<group>"; };
+		2B947CD71B6011B8003764F3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		2BA5998B1A609FA600702947 /* AMGTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMGTableViewController.h; sourceTree = "<group>"; };
 		2BA5998C1A609FA600702947 /* AMGTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMGTableViewController.m; sourceTree = "<group>"; };
 		2BA5998E1A60AAD200702947 /* AMGParseSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMGParseSection.h; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B947CD81B6011B8003764F3 /* AssetsLibrary.framework in Frameworks */,
 				2BDAAFF81A5B49C200BE52E7 /* libstdc++.6.dylib in Frameworks */,
 				2BBAF3351AFA7A9300F4AE9F /* FBSDKCoreKit.framework in Frameworks */,
 				2BFB259C1B1679D600753FC7 /* ParseUI.framework in Frameworks */,
@@ -217,6 +220,7 @@
 		2B4B7BBC19B68CD7006F7A5C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B947CD71B6011B8003764F3 /* AssetsLibrary.framework */,
 				2BFB25931B1679D600753FC7 /* Bolts.framework */,
 				2BFB25941B1679D600753FC7 /* Parse.framework */,
 				2BFB25951B1679D600753FC7 /* ParseCrashReporting.framework */,

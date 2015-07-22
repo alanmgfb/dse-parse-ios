@@ -17,6 +17,7 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKShareKit/FBSDKShareKit.h>
 #import <FBSDKMessengerShareKit/FBSDKMessengerShareKit.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @implementation AMGParseSampleSource
 static NSMutableArray *mutableSections = nil;
@@ -95,7 +96,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"Is Anon User?", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Sheet"],
+      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Publish Video", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -361,6 +362,34 @@ bool pinned_first = NO;
                     [self alertWithMessage:@"Publish success!" title:@"Publish Random Post"];
                 }
             }];
+            break;
+        }
+        
+        case FB_MOVIE: {
+            NSString *videoPath = [[NSBundle mainBundle] pathForResource:@"IMG_0838" ofType:@"MOV"];
+            NSURL *videoUrl = [NSURL fileURLWithPath:videoPath];
+            
+            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+            ALAssetsLibraryWriteVideoCompletionBlock videoWriteCompletionBlock = ^(NSURL *newURL, NSError *error) {
+                if (error) {
+                    [self alertWithMessage:@"Error copying video to Assets Library" title:@"Damn"];
+                } else {
+                    FBSDKShareVideo *video = [[FBSDKShareVideo alloc] init];
+                    video.videoURL = newURL;
+                    FBSDKShareVideoContent *content = [[FBSDKShareVideoContent alloc] init];
+                    content.video = video;
+                    
+                    [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
+                                                 withContent:content delegate:self];
+                }
+            };
+            
+            if (![library videoAtPathIsCompatibleWithSavedPhotosAlbum:videoUrl]) {
+                [self alertWithMessage:@"Video not compatible with Saved Photos Album" title:@"Error"];
+                return;
+            }
+            
+            [library writeVideoAtPathToSavedPhotosAlbum:videoUrl completionBlock:videoWriteCompletionBlock];
             break;
         }
             
