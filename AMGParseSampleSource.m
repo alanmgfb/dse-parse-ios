@@ -316,11 +316,11 @@ bool pinned_first = NO;
             
         case FB_ONLY_LOGIN: {
             FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-            login.loginBehavior = FBSDKLoginBehaviorWeb;
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 [login logInWithReadPermissions:FB_READ_PERMS_ARRAY handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
                     NSLog(@"%@", [result token].tokenString);
+                    NSLog(@"IsCancelled? %d", [result isCancelled]);
                     
                     if (error != nil) {
                         NSLog(@"%@", [error description]);
@@ -720,6 +720,7 @@ bool pinned_first = NO;
                     NSLog(@"Find In Background is back!");
                     for (PFObject *object in objects) {
                         NSLog(@"Found %@ = %@", object.objectId, object[@"value"]);
+                        object[@"user"] = [PFUser currentUser];
                     }
                     [PFObject pinAllInBackground:objects withName:@"ACLTestObjects" block:^(BOOL succeeded, NSError *error) {
                         if (error == nil) {
