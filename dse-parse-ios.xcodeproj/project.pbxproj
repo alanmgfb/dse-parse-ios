@@ -10,6 +10,7 @@
 		2B044B211AAFBA960008E402 /* snoopy.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B044B201AAFBA960008E402 /* snoopy.png */; };
 		2B1339BA1A51FDA400C25370 /* ACLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1339B91A51FDA400C25370 /* ACLTest.m */; };
 		2B38DBA71A378A41006A5437 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B38DBA61A378A41006A5437 /* libsqlite3.0.dylib */; };
+		2B45FE631B7E679000690E3E /* ParseTwitterUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B45FE621B7E679000690E3E /* ParseTwitterUtils.framework */; };
 		2B4B7BBE19B68CD7006F7A5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7BBD19B68CD7006F7A5C /* Foundation.framework */; };
 		2B4B7BC019B68CD7006F7A5C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7BBF19B68CD7006F7A5C /* CoreGraphics.framework */; };
 		2B4B7BC219B68CD7006F7A5C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7BC119B68CD7006F7A5C /* UIKit.framework */; };
@@ -66,6 +67,7 @@
 		2B1339B81A51FDA400C25370 /* ACLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ACLTest.h; sourceTree = "<group>"; };
 		2B1339B91A51FDA400C25370 /* ACLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACLTest.m; sourceTree = "<group>"; };
 		2B38DBA61A378A41006A5437 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		2B45FE621B7E679000690E3E /* ParseTwitterUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseTwitterUtils.framework; sourceTree = "<group>"; };
 		2B4B7BBA19B68CD7006F7A5C /* dse-parse-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "dse-parse-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B4B7BBD19B68CD7006F7A5C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2B4B7BBF19B68CD7006F7A5C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -143,6 +145,7 @@
 				2BFB259A1B1679D600753FC7 /* ParseCrashReporting.framework in Frameworks */,
 				2B4B7BF619B69069006F7A5C /* CoreLocation.framework in Frameworks */,
 				2B4B7BF419B6905D006F7A5C /* CFNetwork.framework in Frameworks */,
+				2B45FE631B7E679000690E3E /* ParseTwitterUtils.framework in Frameworks */,
 				2B4B7BF219B69054006F7A5C /* AudioToolbox.framework in Frameworks */,
 				2B4B7BC019B68CD7006F7A5C /* CoreGraphics.framework in Frameworks */,
 				2B4B7BC219B68CD7006F7A5C /* UIKit.framework in Frameworks */,
@@ -220,6 +223,7 @@
 		2B4B7BBC19B68CD7006F7A5C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B45FE621B7E679000690E3E /* ParseTwitterUtils.framework */,
 				2B947CD71B6011B8003764F3 /* AssetsLibrary.framework */,
 				2BFB25931B1679D600753FC7 /* Bolts.framework */,
 				2BFB25941B1679D600753FC7 /* Parse.framework */,
