@@ -97,7 +97,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"Is Anon User?", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Publish Random Post", @"Publish Video", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Sheet"],
+      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Publish Random Post", @"Publish Video", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -350,6 +350,13 @@ bool pinned_first = NO;
             }
             break;
         }
+            
+        case FB_REFRESH_ACCESS_TOKEN: {
+            [FBSDKAccessToken refreshCurrentAccessToken:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
+                NSLog(@"Result: %@", result);
+            }];
+            break;
+        }
         
         case FB_PUBLISH_RANDOM_POST: {
             NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -380,7 +387,7 @@ bool pinned_first = NO;
                     FBSDKShareVideoContent *content = [[FBSDKShareVideoContent alloc] init];
                     content.video = video;
                     
-                    [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
+                    [FBSDKShareDialog showFromViewController: [self currentViewController]
                                                  withContent:content delegate:self];
                 }
             };
@@ -430,7 +437,7 @@ bool pinned_first = NO;
             
             // Putting the image in the action right now using FBSDKShareDialog has the side effect of no image
             // actually being shown here. Will update later
-            [FBSDKShareDialog showFromViewController: [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject]
+            [FBSDKShareDialog showFromViewController: [self currentViewController]
                                          withContent:content delegate:self];
             break;
         }
@@ -500,7 +507,7 @@ bool pinned_first = NO;
             
         case FB_MESSENGER_SEND_PIC: {
             NSLog(@"Sending Pic Through Messenger!");
-            if ([FBSDKMessengerSharer messengerPlatformCapabilities] & FBSDKMessengerPlatformCapabilityImage) {
+            if (FBSDKMessengerPlatformCapabilityImage) {
                 UIImage *image = [UIImage imageNamed:@"snoopy"];
                 
                 [FBSDKMessengerSharer shareImage:image withOptions:nil];
@@ -513,6 +520,14 @@ bool pinned_first = NO;
             content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1565514703709197"];
             [FBSDKAppInviteDialog showWithContent:content delegate:self];
             
+            break;
+        }
+            
+        case FB_SHARE_LINK: {
+            FBSDKShareLinkContent *content = [[FBSDKShareLinkContent alloc] init];
+            content.contentURL = [NSURL URLWithString:@"http://munchies.vice.com/articles/could-new-orleans-public-drinking-culture-disappear"];
+            
+            [FBSDKShareDialog showFromViewController:[self currentViewController] withContent:content delegate:self];
             break;
         }
             
@@ -1223,5 +1238,14 @@ bool pinned_first = NO;
                                           otherButtonTitles:@"Got It", nil];
     
     [alert show];
+}
+
+/*
+ *
+ *  Utils
+ *
+ */
+- (UIViewController*) currentViewController {
+    return [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject];
 }
 @end
