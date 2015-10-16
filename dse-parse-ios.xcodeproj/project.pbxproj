@@ -535,7 +535,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "parseApp/dse-parse-ios-Prefix.pch";
 				INFOPLIST_FILE = "parseApp/dse-parse-ios-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cardfree.Blimpy;
 				PRODUCT_NAME = "dse-parse-ios";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -559,7 +559,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "parseApp/dse-parse-ios-Prefix.pch";
 				INFOPLIST_FILE = "parseApp/dse-parse-ios-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cardfree.Blimpy;
 				PRODUCT_NAME = "dse-parse-ios";
 				TARGETED_DEVICE_FAMILY = "1,2";

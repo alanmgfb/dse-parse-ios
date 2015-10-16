@@ -319,7 +319,7 @@ bool pinned_first = NO;
             FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                [login logInWithReadPermissions:FB_READ_PERMS_ARRAY handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+                [login logInWithReadPermissions:FB_READ_PERMS_ARRAY fromViewController:[self currentViewController] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
                     NSLog(@"%@", [result token].tokenString);
                     NSLog(@"IsCancelled? %d", [result isCancelled]);
                     
@@ -340,7 +340,7 @@ bool pinned_first = NO;
             if ([FBSDKAccessToken currentAccessToken] != nil) {
                 NSLog(@"Session Permissions %@", [[FBSDKAccessToken currentAccessToken] permissions]);
                 FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
-                [loginManager logInWithPublishPermissions:FB_PUBLISH_PERMS_ARRAY handler:^(FBSDKLoginManagerLoginResult *result, NSError *error){
+                [loginManager logInWithPublishPermissions:FB_PUBLISH_PERMS_ARRAY fromViewController:[self currentViewController] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error){
                     if (!error) {
                         [self alertWithMessage:@"Requested extra permission successfully!" title:@"Request extra permissions"];
                     }
@@ -518,7 +518,7 @@ bool pinned_first = NO;
         case FB_INVITE: {
             FBSDKAppInviteContent *content = [[FBSDKAppInviteContent alloc] init];
             content.appLinkURL = [NSURL URLWithString:@"https://fb.me/1565514703709197"];
-            [FBSDKAppInviteDialog showWithContent:content delegate:self];
+            [FBSDKAppInviteDialog showFromViewController:[self currentViewController] withContent:content delegate:self];
             
             break;
         }
@@ -1231,13 +1231,19 @@ bool pinned_first = NO;
 }
 
 - (void)alertWithMessage:(NSString *)message title:(NSString *)title {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
-                                                    message:message
-                                                   delegate:nil
-                                          cancelButtonTitle:nil
-                                          otherButtonTitles:@"Got It", nil];
+    UIAlertController *alert = [UIAlertController
+                                alertControllerWithTitle:title
+                                message:message
+                                preferredStyle:UIAlertControllerStyleAlert];
     
-    [alert show];
+    UIAlertAction *ok = [UIAlertAction
+                         actionWithTitle:@"Got It" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                             [alert dismissViewControllerAnimated:YES completion:nil];
+                         }];
+    
+    [alert addAction:ok];
+    
+    [[self currentViewController] presentViewController:alert animated:YES completion:nil];
 }
 
 /*
@@ -1246,6 +1252,6 @@ bool pinned_first = NO;
  *
  */
 - (UIViewController*) currentViewController {
-    return [[[[UIApplication sharedApplication] keyWindow] subviews] lastObject];
+    return [self viewController];
 }
 @end

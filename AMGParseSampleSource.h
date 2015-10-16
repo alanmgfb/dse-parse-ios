@@ -12,6 +12,7 @@
 @interface AMGParseSampleSource : NSObject <FBSDKSharingDelegate, FBSDKGameRequestDialogDelegate, FBSDKAppInviteDialogDelegate>
 
 @property NSMutableArray *repro_steps;
+@property UIViewController *viewController;
 extern NSString *const EMAIL;
 extern NSString *const USERNAME;
 extern NSString *const PASSWORD;

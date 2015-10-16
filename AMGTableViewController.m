@@ -29,6 +29,7 @@
     self = [super initWithStyle:UITableViewStyleGrouped];
     [self setTitle:@"DSE Parse Tests"];
     [self setSections:[[AMGParseSampleSource sharedSource] sections]];
+    [[AMGParseSampleSource sharedSource] setViewController:self];
     
     return self;
 }
