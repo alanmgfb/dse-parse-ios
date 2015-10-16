@@ -7,6 +7,8 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+#import <Foundation/Foundation.h>
+
 #import <Parse/PFFile.h>
 #import <Parse/PFNullability.h>
 #import <Parse/PFObject.h>
@@ -21,7 +23,7 @@ PF_ASSUME_NONNULL_BEGIN
 
  This class is currently for iOS only.
  */
-@interface PFProduct : PFObject<PFSubclassing>
+PF_WATCH_UNAVAILABLE @interface PFProduct : PFObject<PFSubclassing>
 
 ///--------------------------------------
 /// @name Product-specific Properties
