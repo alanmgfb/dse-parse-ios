@@ -97,7 +97,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"Is Anon User?", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Publish Random Post", @"Publish Video", @"Full OG Sample", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
+      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Publish Random Post", @"Publish Video", @"Full OG Sample", @"Full OG Sample API", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -405,40 +405,19 @@ bool pinned_first = NO;
             NSLog(@"Full OG Image Staging OG Posting FB Publishing!");
             NSLog(@"Access Token to Use: %@",[[FBSDKAccessToken currentAccessToken] tokenString]);
             
-            // Photo to be shared
-            FBSDKSharePhoto *shareSnoopy = [[FBSDKSharePhoto alloc] init];
-            shareSnoopy.image = [UIImage imageNamed:@"snoopy.png"];
-            shareSnoopy.userGenerated = YES;
-            
-            // OG object
-            NSDictionary *ogProperties = @{
-                                           @"og:type":@"alanmgsandbox:accident",
-                                           @"og:title":@"Watch out!",
-                                           @"og:description":[NSString stringWithFormat:@"On %@, Snoopy tripped into Woodstock!", [NSDate date]]
-            };
-            FBSDKShareOpenGraphObject *ogObject = [FBSDKShareOpenGraphObject objectWithProperties:ogProperties];
-            // If what you intend is to add the image to the OG Object, do it like this:
-            // [ogObject setPhoto:shareSnoopy forKey:@"og:image"];
-            
-            // Action
-            FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
-            action.actionType = @"alanmgsandbox:photograph";
-            [action setObject:ogObject forKey:@"accident"];
-            // If you want to add an image to the Action, use this:
-            [action setArray:@[shareSnoopy] forKey:@"image"];
-            
-            // Content
-            FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
-            content.action = action;
-            content.previewPropertyName = @"accident";
-            
-            // You can use either or:
-            // [FBSDKShareAPI shareWithContent:content delegate:self];
-            
             // Putting the image in the action right now using FBSDKShareDialog has the side effect of no image
             // actually being shown here. Will update later
             [FBSDKShareDialog showFromViewController: [self currentViewController]
-                                         withContent:content delegate:self];
+                                         withContent:[self buildShareContent] delegate:self];
+            break;
+        }
+            
+        case FB_OG_IMAGE_FULL_API: {
+            NSLog(@"Full OG Image Staging OG Posting FB Publishing!");
+            NSLog(@"Access Token to Use: %@",[[FBSDKAccessToken currentAccessToken] tokenString]);
+            
+            // You can use either or:
+            [FBSDKShareAPI shareWithContent:[self buildShareContent] delegate:self];
             break;
         }
             
@@ -1253,5 +1232,36 @@ bool pinned_first = NO;
  */
 - (UIViewController*) currentViewController {
     return [self viewController];
+}
+
+- (FBSDKShareOpenGraphContent*) buildShareContent {
+    // Photo to be shared
+    FBSDKSharePhoto *shareSnoopy = [[FBSDKSharePhoto alloc] init];
+    shareSnoopy.image = [UIImage imageNamed:@"snoopy.png"];
+    shareSnoopy.userGenerated = YES;
+    
+    // OG object
+    NSDictionary *ogProperties = @{
+                                   @"og:type":@"alanmgsandbox:accident",
+                                   @"og:title":@"Watch out!",
+                                   @"og:description":[NSString stringWithFormat:@"On %@, Snoopy tripped into Woodstock!", [NSDate date]]
+                                   };
+    FBSDKShareOpenGraphObject *ogObject = [FBSDKShareOpenGraphObject objectWithProperties:ogProperties];
+    // If what you intend is to add the image to the OG Object, do it like this:
+    // [ogObject setPhoto:shareSnoopy forKey:@"og:image"];
+    
+    // Action
+    FBSDKShareOpenGraphAction *action = [[FBSDKShareOpenGraphAction alloc] init];
+    action.actionType = @"alanmgsandbox:photograph";
+    [action setObject:ogObject forKey:@"accident"];
+    // If you want to add an image to the Action, use this:
+    [action setArray:@[shareSnoopy] forKey:@"image"];
+    
+    // Content
+    FBSDKShareOpenGraphContent *content = [FBSDKShareOpenGraphContent alloc];
+    content.action = action;
+    content.previewPropertyName = @"accident";
+
+    return content;
 }
 @end
