@@ -15,6 +15,8 @@
 		2B249D881B826FBA0004B75C /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BBAF3341AFA7A9300F4AE9F /* FBSDKShareKit.framework */; };
 		2B38DBA71A378A41006A5437 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B38DBA61A378A41006A5437 /* libsqlite3.0.dylib */; };
 		2B45FE631B7E679000690E3E /* ParseTwitterUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B45FE621B7E679000690E3E /* ParseTwitterUtils.framework */; };
+		2B4610E81C21E57500B8A92C /* 520.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B4610E61C21E57500B8A92C /* 520.png */; settings = {ASSET_TAGS = (); }; };
+		2B4610E91C21E57500B8A92C /* 720.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B4610E71C21E57500B8A92C /* 720.png */; settings = {ASSET_TAGS = (); }; };
 		2B4B7BBE19B68CD7006F7A5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7BBD19B68CD7006F7A5C /* Foundation.framework */; };
 		2B4B7BC019B68CD7006F7A5C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7BBF19B68CD7006F7A5C /* CoreGraphics.framework */; };
 		2B4B7BC219B68CD7006F7A5C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7BC119B68CD7006F7A5C /* UIKit.framework */; };
@@ -68,6 +70,8 @@
 		2B1339B91A51FDA400C25370 /* ACLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ACLTest.m; sourceTree = "<group>"; };
 		2B38DBA61A378A41006A5437 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		2B45FE621B7E679000690E3E /* ParseTwitterUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseTwitterUtils.framework; sourceTree = "<group>"; };
+		2B4610E61C21E57500B8A92C /* 520.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 520.png; sourceTree = "<group>"; };
+		2B4610E71C21E57500B8A92C /* 720.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 720.png; sourceTree = "<group>"; };
 		2B4B7BBA19B68CD7006F7A5C /* dse-parse-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "dse-parse-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B4B7BBD19B68CD7006F7A5C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2B4B7BBF19B68CD7006F7A5C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -170,6 +174,8 @@
 			isa = PBXGroup;
 			children = (
 				2B044B201AAFBA960008E402 /* snoopy.png */,
+				2B4610E61C21E57500B8A92C /* 520.png */,
+				2B4610E71C21E57500B8A92C /* 720.png */,
 				2B947CD51B600B6D003764F3 /* IMG_0838.MOV */,
 			);
 			name = Resources;
@@ -381,7 +387,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B044B211AAFBA960008E402 /* snoopy.png in Resources */,
+				2B4610E81C21E57500B8A92C /* 520.png in Resources */,
 				2B4B7BC819B68CD7006F7A5C /* InfoPlist.strings in Resources */,
+				2B4610E91C21E57500B8A92C /* 720.png in Resources */,
 				2B4B7BD019B68CD7006F7A5C /* Images.xcassets in Resources */,
 				2B947CD61B600B6D003764F3 /* IMG_0838.MOV in Resources */,
 			);
