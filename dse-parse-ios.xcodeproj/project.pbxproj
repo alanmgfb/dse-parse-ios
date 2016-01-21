@@ -40,6 +40,7 @@
 		2B4B7C0219B6909C006F7A5C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7C0119B6909C006F7A5C /* SystemConfiguration.framework */; };
 		2B4B7C0B19B69322006F7A5C /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7C0719B69139006F7A5C /* Accounts.framework */; };
 		2B4B7C0D19B69360006F7A5C /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B4B7C0C19B69360006F7A5C /* Social.framework */; };
+		2B8048881C21F1B4006DB7B5 /* large.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2B8048871C21F1B4006DB7B5 /* large.jpg */; settings = {ASSET_TAGS = (); }; };
 		2B947CD61B600B6D003764F3 /* IMG_0838.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 2B947CD51B600B6D003764F3 /* IMG_0838.MOV */; };
 		2B947CD81B6011B8003764F3 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B947CD71B6011B8003764F3 /* AssetsLibrary.framework */; };
 		2BA5998D1A609FA600702947 /* AMGTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BA5998C1A609FA600702947 /* AMGTableViewController.m */; };
@@ -100,6 +101,7 @@
 		2B4B7C0719B69139006F7A5C /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		2B4B7C0919B6930C006F7A5C /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		2B4B7C0C19B69360006F7A5C /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		2B8048871C21F1B4006DB7B5 /* large.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = large.jpg; sourceTree = "<group>"; };
 		2B947CD51B600B6D003764F3 /* IMG_0838.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = IMG_0838.MOV; sourceTree = "<group>"; };
 		2B947CD71B6011B8003764F3 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		2BA5998B1A609FA600702947 /* AMGTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMGTableViewController.h; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			children = (
 				2B044B201AAFBA960008E402 /* snoopy.png */,
 				2B4610E61C21E57500B8A92C /* 520.png */,
+				2B8048871C21F1B4006DB7B5 /* large.jpg */,
 				2B4610E71C21E57500B8A92C /* 720.png */,
 				2B947CD51B600B6D003764F3 /* IMG_0838.MOV */,
 			);
@@ -390,6 +393,7 @@
 				2B4610E81C21E57500B8A92C /* 520.png in Resources */,
 				2B4B7BC819B68CD7006F7A5C /* InfoPlist.strings in Resources */,
 				2B4610E91C21E57500B8A92C /* 720.png in Resources */,
+				2B8048881C21F1B4006DB7B5 /* large.jpg in Resources */,
 				2B4B7BD019B68CD7006F7A5C /* Images.xcassets in Resources */,
 				2B947CD61B600B6D003764F3 /* IMG_0838.MOV in Resources */,
 			);

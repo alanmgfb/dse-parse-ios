@@ -97,7 +97,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"Is Anon User?", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Publish Random Post", @"Publish Video", @"OG Image Share", @"OG Image Share via API", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
+      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Publish Random Post", @"Publish Video", @"Publish Image", @"OG Image Share", @"OG Image Share via API", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -398,6 +398,18 @@ bool pinned_first = NO;
             }
             
             [library writeVideoAtPathToSavedPhotosAlbum:videoUrl completionBlock:videoWriteCompletionBlock];
+            break;
+        }
+            
+        case FB_IMAGE: {
+            FBSDKSharePhoto *photo = [[FBSDKSharePhoto alloc] init];
+            photo.image = [UIImage imageNamed:@"large.jpg"];
+            photo.userGenerated = YES;
+            
+            FBSDKSharePhotoContent *content = [[FBSDKSharePhotoContent alloc] init];
+            content.photos = @[photo];
+            
+            [FBSDKShareDialog showFromViewController:[self currentViewController] withContent:content delegate:self];
             break;
         }
             
