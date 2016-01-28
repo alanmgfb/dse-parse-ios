@@ -27,6 +27,7 @@ NSString *const USERNAME = @"alaniOS";
 NSString *const PASSWORD = @"alaniOS";
 NSArray *FB_READ_PERMS_ARRAY = nil;
 NSArray *FB_PUBLISH_PERMS_ARRAY = nil;
+FBSDKLoginManager *loginManager = nil;
 
 // Parse Local Datastore
 bool pinned_first = NO;
@@ -97,7 +98,7 @@ bool pinned_first = NO;
     NSDictionary *samples =
     @{
       @"Login" : @[@"Sign Up", @"Log In", @"Anonymous Login", @"Is Anon User?", @"View Controller Login", @"Facebook", @"Twitter", @"Reset Password", @"Facebook Unlink", @"Log out"],
-      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Publish Random Post", @"Publish Video", @"Publish Image", @"OG Image Share", @"OG Image Share via API", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
+      @"Facebook" : @[@"Login [No Parse]", @"See Current Permissions", @"Request publish_actions", @"Refresh Access Token", @"Logout", @"Publish Random Post", @"Publish Video", @"Publish Image", @"OG Image Share", @"OG Image Share via API", @"OG Movie", @"Upload Photo", @"Send Game Request", @"Messenger Send Pic", @"App Invite Dialog", @"Share Link", @"Share Sheet"],
       @"Events / Analytics" : @[@"Save Installation", @"Save Event"],
       @"ACL" : @[@"Add New Field", @"Update Existing Field", @"ACL Test Query"],
       @"PFObjects" : @[@"Save PFUser Property", @"Refresh User", @"Mutex Lock"],
@@ -316,10 +317,9 @@ bool pinned_first = NO;
         }
             
         case FB_ONLY_LOGIN: {
-            FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
-            
+            FBSDKLoginManager *manager = [self getLoginManager];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [login logInWithReadPermissions:FB_READ_PERMS_ARRAY fromViewController:[self currentViewController] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+                [manager logInWithReadPermissions:FB_READ_PERMS_ARRAY fromViewController:[self currentViewController] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
                     NSLog(@"%@", [result token].tokenString);
                     NSLog(@"IsCancelled? %d", [result isCancelled]);
                     
@@ -339,8 +339,8 @@ bool pinned_first = NO;
         case FB_REQUEST_EXTRA_PERMISSIONS: {
             if ([FBSDKAccessToken currentAccessToken] != nil) {
                 NSLog(@"Session Permissions %@", [[FBSDKAccessToken currentAccessToken] permissions]);
-                FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
-                [loginManager logInWithPublishPermissions:FB_PUBLISH_PERMS_ARRAY fromViewController:[self currentViewController] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error){
+                FBSDKLoginManager *manager = [self getLoginManager];
+                [manager logInWithPublishPermissions:FB_PUBLISH_PERMS_ARRAY fromViewController:[self currentViewController] handler:^(FBSDKLoginManagerLoginResult *result, NSError *error){
                     if (!error) {
                         [self alertWithMessage:@"Requested extra permission successfully!" title:@"Request extra permissions"];
                     }
@@ -355,6 +355,13 @@ bool pinned_first = NO;
             [FBSDKAccessToken refreshCurrentAccessToken:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
                 NSLog(@"Result: %@", result);
             }];
+            break;
+        }
+            
+        case FB_LOGOUT: {
+            FBSDKLoginManager *manager = [self getLoginManager];
+            [manager logOut];
+            [self alertWithMessage:@"Logged out of the app" title:@"FB Logout"];
             break;
         }
         
@@ -1276,5 +1283,13 @@ bool pinned_first = NO;
     content.previewPropertyName = @"accident";
 
     return content;
+}
+
+- (FBSDKLoginManager*) getLoginManager {
+    if (loginManager == nil) {
+        loginManager = [[FBSDKLoginManager alloc] init];
+    }
+    
+    return loginManager;
 }
 @end
